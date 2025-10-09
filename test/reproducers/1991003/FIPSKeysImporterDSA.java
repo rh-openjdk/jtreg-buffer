@@ -60,7 +60,7 @@ import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 /*
  * @test
  * @summary Test for RH1991003 - FIPS keys importer
- * @requires os.version ~= ".*el10.*"
+ * @requires !(os.version ~= ".*el10.*")
  * @run main/othervm/timeout=30 FIPSKeysImporter
  */
 
@@ -78,6 +78,7 @@ public final class FIPSKeysImporter {
 
     private static final List<String[]> rootCAs = new ArrayList<>();
     static {
+        rootCAs.add(new String[] {"root_ca_0", "DSA"});
         rootCAs.add(new String[] {"root_ca_1", "RSA"});
         rootCAs.add(new String[] {"root_ca_2", "EC"});
     }
@@ -143,6 +144,13 @@ public final class FIPSKeysImporter {
     }
 
     private void testSignature() throws Throwable {
+        TestCA rootCA0 = cas.get("root_ca_0");
+        doTestSignature("SHA1withDSA", rootCA0.getPrivateKey(PLAIN_ORIGIN),
+                rootCA0.getPublicKey(PLAIN_ORIGIN));
+
+        doTestSignature("SHA1withDSA", rootCA0.getPrivateKey(JKS_ORIGIN),
+                rootCA0.getPublicKey(JKS_ORIGIN));
+
         TestCA rootCA1 = cas.get("root_ca_1");
         doTestSignature("SHA256WithRSA", rootCA1.getPrivateKey(PLAIN_ORIGIN),
                 rootCA1.getPublicKey(PLAIN_ORIGIN));
