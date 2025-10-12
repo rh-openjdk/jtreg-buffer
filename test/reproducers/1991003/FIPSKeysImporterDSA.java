@@ -60,11 +60,11 @@ import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 /*
  * @test
  * @summary Test for RH1991003 - FIPS keys importer
- * @requires !(os.version ~= ".*el10.*")
- * @run main/othervm/timeout=30 FIPSKeysImporter
+ * @requires var.os.version.major < 10 | var.sys.fips == "false"
+ * @run main/othervm/timeout=30 FIPSKeysImporterDSA
  */
 
-public final class FIPSKeysImporter {
+public final class FIPSKeysImporterDSA {
 
     private static final boolean enableDebug = true;
 
@@ -130,7 +130,7 @@ public final class FIPSKeysImporter {
     }
 
     public static void main(String[] args) throws Throwable {
-        FIPSKeysImporter fki = new FIPSKeysImporter();
+        FIPSKeysImporterDSA fki = new FIPSKeysImporterDSA();
         fki.loadKSS();
         fki.loadCAS();
         fki.testSignature();
@@ -145,10 +145,10 @@ public final class FIPSKeysImporter {
 
     private void testSignature() throws Throwable {
         TestCA rootCA0 = cas.get("root_ca_0");
-        doTestSignature("SHA1withDSA", rootCA0.getPrivateKey(PLAIN_ORIGIN),
+        doTestSignature("SHA256withDSA", rootCA0.getPrivateKey(PLAIN_ORIGIN),
                 rootCA0.getPublicKey(PLAIN_ORIGIN));
 
-        doTestSignature("SHA1withDSA", rootCA0.getPrivateKey(JKS_ORIGIN),
+        doTestSignature("SHA256withDSA", rootCA0.getPrivateKey(JKS_ORIGIN),
                 rootCA0.getPublicKey(JKS_ORIGIN));
 
         TestCA rootCA1 = cas.get("root_ca_1");
