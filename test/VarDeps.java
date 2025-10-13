@@ -4,8 +4,12 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
+
 
 public class VarDeps implements Callable<Map<String, String>> {
 
@@ -32,30 +36,42 @@ public class VarDeps implements Callable<Map<String, String>> {
     }
 
     private static boolean isFipsEnabled() {
-        Path flag = Path.of("/proc/sys/crypto/fips_enabled");
+        File flag = new File("/proc/sys/crypto/fips_enabled");
+        if (!flag.exists()) {
+            return false;
+        }
+
+        BufferedReader br = null;
         try {
-            if (Files.exists(flag)) {
-                String value = Files.readString(flag).trim();
+            br = new BufferedReader(new FileReader(flag));
+            String value = br.readLine();
+            if (value != null) {
+                value = value.trim();
                 return "1".equals(value);
             }
         } catch (IOException e) {
             // Could not read flag — assume non-FIPS
+        } finally {
+            if (br != null) {
+                try { br.close(); } catch (IOException ignored) {}
+            }
         }
         return false;
     }
 
     public static int getOsVersionId() {
-        Path osRelease = Path.of("/etc/os-release");
-        if (!Files.exists(osRelease)) {
+        File osRelease = new File("/etc/os-release");
+        if (!osRelease.exists()) {
             return -1;
         }
 
+        BufferedReader br = null;
         try {
-            List<String> lines = Files.readAllLines(osRelease);
-            for (String line : lines) {
+            br = new BufferedReader(new FileReader(osRelease));
+            String line;
+            while ((line = br.readLine()) != null) {
                 if (line.startsWith("VERSION_ID=")) {
-                    String value = line.split("=", 2)[1].replaceAll("\"", "").trim();
-                    // Extract leading integer part (e.g. "10.0" → 10)
+                    String value = line.split("=", 2)[1].replace("\"", "").trim();
                     String[] parts = value.split("\\.");
                     try {
                         return Integer.parseInt(parts[0]);
@@ -66,10 +82,14 @@ public class VarDeps implements Callable<Map<String, String>> {
             }
         } catch (IOException e) {
             return -1;
+        } finally {
+            if (br != null) {
+                try { br.close(); } catch (IOException ignored) {}
+            }
         }
 
         return -1;
     }
-
     
 }
+
