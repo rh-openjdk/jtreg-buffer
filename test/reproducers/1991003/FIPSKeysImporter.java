@@ -60,45 +60,44 @@ import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 /*
  * @test
  * @summary Test for RH1991003 - FIPS keys importer
- * @requires (jdk.version.major >= 8)
+ * @requires var.sys.fips == "true" & ( !(os.version ~= ".*el.*") | var.os.version.major >= 10 ) 
  * @run main/othervm/timeout=30 FIPSKeysImporter
  */
 
-public final class FIPSKeysImporter {
+public class FIPSKeysImporter {
 
-    private static final boolean enableDebug = true;
+    protected static final boolean enableDebug = true;
 
-    private static final String knownText =
+    protected static final String knownText =
             "Known text known text known text";
 
-    private static final byte[] secretKey = new byte[32];
+    protected static final byte[] secretKey = new byte[32];
 
-    private static final int PLAIN_ORIGIN = 1;
-    private static final int JKS_ORIGIN = 2;
+    protected static final int PLAIN_ORIGIN = 1;
+    protected static final int JKS_ORIGIN = 2;
 
-    private static final List<String[]> rootCAs = new ArrayList<>();
+    protected static final List<String[]> rootCAs = new ArrayList<>();
     static {
-        rootCAs.add(new String[] {"root_ca_0", "DSA"});
         rootCAs.add(new String[] {"root_ca_1", "RSA"});
         rootCAs.add(new String[] {"root_ca_2", "EC"});
     }
 
-    private static final List<String[]> KSs = new ArrayList<>();
+    protected static List<String[]> KSs = new ArrayList<>();
     static {
         KSs.add(new String[] {"JKS", "jks"});
     }
 
-    private static char[] passphrase = "123456".toCharArray();
+    protected static char[] passphrase = "123456".toCharArray();
 
-    private Map<String, KeyStore> kss = new HashMap<>();
-    private Map<String, TestCA> cas = new HashMap<>();
+    protected Map<String, KeyStore> kss = new HashMap<>();
+    protected Map<String, TestCA> cas = new HashMap<>();
 
-    private static class TestCA {
+    protected static class TestCA {
 
-        private String alias;
-        private Map<Integer, Certificate> certs = new HashMap<>();
-        private Map<Integer, PrivateKey> privKeys = new HashMap<>();
-        private Map<Integer, PublicKey> pubKeys = new HashMap<>();
+        protected String alias;
+        protected Map<Integer, Certificate> certs = new HashMap<>();
+        protected Map<Integer, PrivateKey> privKeys = new HashMap<>();
+        protected Map<Integer, PublicKey> pubKeys = new HashMap<>();
 
         TestCA(String alias) {
             this.alias = alias;
@@ -139,19 +138,11 @@ public final class FIPSKeysImporter {
         System.out.println("TEST PASS - OK");
     }
 
-    private void testTLS() throws Throwable {
+    protected void testTLS() throws Throwable {
         TLSTester.doTestTLS(kss.get("JKS"));
     }
 
-    private void testSignature() throws Throwable {
-        TestCA rootCA0 = cas.get("root_ca_0");
-        // Enable after JDK-8271566 is fixed.
-        //doTestSignature("SHA1withDSA", rootCA0.getPrivateKey(PLAIN_ORIGIN),
-        //        rootCA0.getPublicKey(PLAIN_ORIGIN));
-
-        //doTestSignature("SHA1withDSA", rootCA0.getPrivateKey(JKS_ORIGIN),
-        //        rootCA0.getPublicKey(JKS_ORIGIN));
-
+    protected void testSignature() throws Throwable {
         TestCA rootCA1 = cas.get("root_ca_1");
         doTestSignature("SHA256WithRSA", rootCA1.getPrivateKey(PLAIN_ORIGIN),
                 rootCA1.getPublicKey(PLAIN_ORIGIN));
@@ -165,7 +156,7 @@ public final class FIPSKeysImporter {
                 rootCA2.getPublicKey(JKS_ORIGIN));
     }
 
-    private void testCipher() throws Throwable {
+    protected void testCipher() throws Throwable {
         Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
         if (enableDebug) {
             System.out.println("Cipher Provider: " + c.getProvider());
@@ -185,7 +176,7 @@ public final class FIPSKeysImporter {
         }
     }
 
-    private static void doTestSignature(String sigAlg, PrivateKey privKey,
+    protected static void doTestSignature(String sigAlg, PrivateKey privKey,
             PublicKey pubKey) throws Throwable {
         byte[] knownTextSig = null;
         Signature s = Signature.getInstance(sigAlg);
@@ -208,13 +199,13 @@ public final class FIPSKeysImporter {
         }
     }
 
-    private void loadKSS() throws Throwable {
+    protected void loadKSS() throws Throwable {
         for (String[] ks : KSs) {
             kss.put(ks[0], readKeyStore(ks[0], ks[1]));
         }
     }
 
-    private static KeyStore readKeyStore(String keystoreType, String fileExtension)
+    protected static KeyStore readKeyStore(String keystoreType, String fileExtension)
             throws Exception {
         File file = new File(System.getProperty("test.src", "."),
                 "keystore." + fileExtension);
@@ -225,14 +216,14 @@ public final class FIPSKeysImporter {
         return ks;
     }
 
-    private void loadCAS() throws Throwable {
+    protected void loadCAS() throws Throwable {
         for (String[] rootCA : rootCAs) {
             loadPlainCA(rootCA[0], rootCA[1]);
             loadJKSCA(rootCA[0], rootCA[1]);
         }
     }
 
-    private TestCA getCA(String alias) {
+    protected TestCA getCA(String alias) {
         TestCA ca = cas.get(alias);
         if (ca == null) {
             ca = new TestCA(alias);
@@ -241,7 +232,7 @@ public final class FIPSKeysImporter {
         return ca;
     }
 
-    private void loadPlainCA(String alias, String alg) throws Throwable {
+    protected void loadPlainCA(String alias, String alg) throws Throwable {
         TestCA ca = getCA(alias);
         Certificate cert = readCertificate(alias);
         ca.addCertificate(PLAIN_ORIGIN, cert);
@@ -249,7 +240,7 @@ public final class FIPSKeysImporter {
         ca.addPrivateKey(PLAIN_ORIGIN, readPrivateKey(alias, alg));
     }
 
-    private void loadJKSCA(String alias, String alg) throws Throwable {
+    protected void loadJKSCA(String alias, String alg) throws Throwable {
         KeyStore ks = kss.get("JKS");
         TestCA ca = getCA(alias);
         Certificate cert = ks.getCertificate(alias);
@@ -258,26 +249,26 @@ public final class FIPSKeysImporter {
         ca.addPrivateKey(JKS_ORIGIN, (PrivateKey)ks.getKey(alias, passphrase));
     }
 
-    private static PrivateKey readPrivateKey(String alias, String alg) throws Throwable {
+    protected static PrivateKey readPrivateKey(String alias, String alg) throws Throwable {
         byte[] privKeyBytes = readAllFileBytes(alias + "_private_key_bytes");
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(privKeyBytes);
         KeyFactory kf = KeyFactory.getInstance(alg);
         return kf.generatePrivate(spec);
     }
 
-    private static Certificate readCertificate(String alias) throws Throwable {
+    protected static Certificate readCertificate(String alias) throws Throwable {
         byte[] certificateBytes = readAllFileBytes(alias + "_certificate.pem");
         return CertificateFactory.getInstance("X.509")
                 .generateCertificate(new ByteArrayInputStream(
                         certificateBytes));
     }
 
-    private static byte[] readAllFileBytes(String fileName) throws IOException {
+    protected static byte[] readAllFileBytes(String fileName) throws IOException {
         Path p = Paths.get(System.getProperty("test.src", "."), fileName);
         return Files.readAllBytes(p);
     }
 
-    private static class TLSTester {
+    protected static class TLSTester {
         public static void doTestTLS(KeyStore ks) throws Throwable {
             SSLEngine[][] enginesToTest = getSSLEnginesToTest(ks);
 
@@ -367,7 +358,7 @@ public final class FIPSKeysImporter {
             System.out.flush();
         }
 
-        private static void checkTransfer(ByteBuffer a, ByteBuffer b)
+        protected static void checkTransfer(ByteBuffer a, ByteBuffer b)
                 throws Throwable {
             a.flip();
             b.flip();
@@ -380,7 +371,7 @@ public final class FIPSKeysImporter {
             b.limit(b.capacity());
         }
 
-        private static void runDelegatedTasks(SSLEngineResult result,
+        protected static void runDelegatedTasks(SSLEngineResult result,
                 SSLEngine engine) throws Throwable {
 
             if (result.getHandshakeStatus() == HandshakeStatus.NEED_TASK) {
@@ -396,7 +387,7 @@ public final class FIPSKeysImporter {
             }
         }
 
-        private static SSLEngine[][] getSSLEnginesToTest(KeyStore ks)
+        protected static SSLEngine[][] getSSLEnginesToTest(KeyStore ks)
                 throws Throwable {
             SSLEngine[][] enginesToTest = new SSLEngine[1][2];
             String[][] preferredSuites = new String[][]{ new String[] {
@@ -411,7 +402,7 @@ public final class FIPSKeysImporter {
             return enginesToTest;
         }
 
-        private static SSLEngine createSSLEngine(KeyStore ks, boolean client)
+        protected static SSLEngine createSSLEngine(KeyStore ks, boolean client)
                 throws Throwable {
             SSLEngine ssle;
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("PKIX");

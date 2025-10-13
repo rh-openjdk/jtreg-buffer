@@ -5,4 +5,6 @@ maxOutputSize=1000000
 requires.extraPropDefns = VarDeps.java
 requires.properties = \
     var.rh.jdk \
-    var.msys2.enabled
+    var.msys2.enabled \
+    var.sys.fips \
+    var.os.version.major
