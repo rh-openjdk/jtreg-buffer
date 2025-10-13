@@ -41,9 +41,7 @@ public class VarDeps implements Callable<Map<String, String>> {
             return false;
         }
 
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(flag));
+        try (BufferedReader br = new BufferedReader(new FileReader(flag))){
             String value = br.readLine();
             if (value != null) {
                 value = value.trim();
@@ -51,10 +49,6 @@ public class VarDeps implements Callable<Map<String, String>> {
             }
         } catch (IOException e) {
             // Could not read flag — assume non-FIPS
-        } finally {
-            if (br != null) {
-                try { br.close(); } catch (IOException ignored) {}
-            }
         }
         return false;
     }
@@ -65,9 +59,7 @@ public class VarDeps implements Callable<Map<String, String>> {
             return -1;
         }
 
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(osRelease));
+        try (BufferedReader br = new BufferedReader(new FileReader(osRelease))){
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("VERSION_ID=")) {
@@ -82,12 +74,7 @@ public class VarDeps implements Callable<Map<String, String>> {
             }
         } catch (IOException e) {
             return -1;
-        } finally {
-            if (br != null) {
-                try { br.close(); } catch (IOException ignored) {}
-            }
         }
-
         return -1;
     }
     

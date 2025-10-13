@@ -25,7 +25,7 @@
 /*
  * @test
  * @summary Test for RH1991003 - FIPS keys importer
- * @requires (var.os.version.major < 10 | var.sys.fips == "false") & (os.version ~= ".*el.*")
+ * @requires var.sys.fips == "false" | (os.version ~= ".*el.*" & var.os.version.major < 10)
  * @run main/othervm/timeout=30 FIPSKeysImporterDSA
  */
 
