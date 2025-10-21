@@ -55,7 +55,7 @@ case "$OS" in
     ;;
 esac
 
-if $TESTJAVA/bin/java -version 2>&1 | grep 1.8.0 ; then
+if $TESTJAVA/bin/java -version 2>&1 | grep '1[.]8[.]0' ; then
   EXTFLAGS=""
 else
   EXTFLAGS='--add-modules jdk.crypto.cryptoki,java.base --add-exports jdk.crypto.cryptoki/sun.security.pkcs11=ALL-UNNAMED --add-opens jdk.crypto.cryptoki/sun.security.pkcs11=ALL-UNNAMED --add-exports java.base/javax.crypto=ALL-UNNAMED --add-opens java.base/javax.crypto=ALL-UNNAMED'

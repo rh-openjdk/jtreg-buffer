@@ -11,7 +11,7 @@ if [ "x$TESTSRC" == x ] ; then
   TESTSRC=.
 fi
 
-if $JAVA -version 2>&1 | grep 1.8.0 ; then
+if $JAVA -version 2>&1 | grep '1[.]8[.]0' ; then
   FLAGS=""
 else
   # this is needed for ojdk 16 and above
