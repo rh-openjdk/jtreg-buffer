@@ -1,6 +1,7 @@
 /* @test
    @bug 6664545
    @summary  nssadapter should not use a single PKCS #11 session for multi-thread operations
+   @requires jdk.version.major > 20
    @run shell Main.sh
 */
 import javax.crypto.Cipher;
