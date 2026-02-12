@@ -21,7 +21,6 @@ jobs:
           - JDK 17
           - JDK 21
           - JDK 25
-          - JDK Latest
         include:
           - jdkconf: JDK 8
             jdkver: "8"
@@ -32,8 +31,6 @@ jobs:
           - jdkconf: JDK 21
             jdkver: "21"
           - jdkconf: JDK 25
-            jdkver: "25"
-          - jdkconf: JDK Latest
             jdkver: "25"
     steps:
       - uses: actions/checkout@v3
