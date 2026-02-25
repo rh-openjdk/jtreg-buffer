@@ -60,7 +60,7 @@ import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 /*
  * @test
  * @summary Test for RH1991003 - FIPS keys importer
- * @requires var.sys.fips == "true" & ( !(os.version ~= ".*el.*") | var.os.version.major >= 10 ) 
+ * @requires var.sys.fips == "true" & ( !(os.version ~= ".*el.*") | var.os.version.major >= 10 | jdk.version.major < 17)
  * @run main/othervm/timeout=30 FIPSKeysImporter
  */
 
