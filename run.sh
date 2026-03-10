@@ -34,7 +34,7 @@ esac
 READLINK_F="-f"
 readlink $READLINK_F "." || READLINK_F=""
 
-envVarArg="-e:CUSTOM_DUMMY_VARIABLE=true,JAVA_TOOL_OPTIONS,OTOOL_BUILD_ARCH,DISPLAY"
+envVarArg="-e:CUSTOM_DUMMY_VARIABLE=true,JAVA_TOOL_OPTIONS,OTOOL_BUILD_ARCH,DISPLAY,XAUTHORITY"
 keys=$(env | grep OTOOL_ | sed "s/=.*//")
 for key in $keys; do
   envVarArg="$envVarArg,$key"
