@@ -152,7 +152,8 @@ tar -czf test.${TIME}.tar.gz "${jtWork}" "${jtReport}" || echo "Packing of resul
 popd
 
 if [ ! `readlink $READLINK_F ${SCRIPT_DIR}` == `pwd`  ] ; then
-    mv ${SCRIPT_DIR}/test.${TIME} .
+    cp -r ${SCRIPT_DIR}/test.${TIME} .
+	rm -rf ${SCRIPT_DIR}/test.${TIME}
     mv -v  ${SCRIPT_DIR}/test.${TIME}.tar.gz . || echo "Moving of results tarball failed"
 fi
 
