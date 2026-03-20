@@ -152,8 +152,10 @@ tar -czf test.${TIME}.tar.gz "${jtWork}" "${jtReport}" || echo "Packing of resul
 popd
 
 if [ ! `readlink $READLINK_F ${SCRIPT_DIR}` == `pwd`  ] ; then
-    mv ${SCRIPT_DIR}/test.${TIME} .
-    mv -v  ${SCRIPT_DIR}/test.${TIME}.tar.gz . || echo "Moving of results tarball failed"
+    cp -r ${SCRIPT_DIR}/test.${TIME} .
+	rm -rf ${SCRIPT_DIR}/test.${TIME} || echo "Removal of results folder failed, thats usually ok"
+    cp -r  ${SCRIPT_DIR}/test.${TIME}.tar.gz . || echo "Copyingof results tarball failed, thats usually ok"
+    rm -rf  ${SCRIPT_DIR}/test.${TIME}.tar.gz  || echo "Removal of results tarball failed, thats usually ok"
 fi
 
 if ! [ -f test.${TIME}/tests.log ] ; then
