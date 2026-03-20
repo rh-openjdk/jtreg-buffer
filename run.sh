@@ -154,7 +154,8 @@ popd
 if [ ! `readlink $READLINK_F ${SCRIPT_DIR}` == `pwd`  ] ; then
     cp -r ${SCRIPT_DIR}/test.${TIME} .
 	rm -rf ${SCRIPT_DIR}/test.${TIME}
-    mv -v  ${SCRIPT_DIR}/test.${TIME}.tar.gz . || echo "Moving of results tarball failed"
+   cp -r  ${SCRIPT_DIR}/test.${TIME}.tar.gz . || echo "Moving of results tarball failed"
+   rm -rf  ${SCRIPT_DIR}/test.${TIME}.tar.gz
 fi
 
 if ! [ -f test.${TIME}/tests.log ] ; then
