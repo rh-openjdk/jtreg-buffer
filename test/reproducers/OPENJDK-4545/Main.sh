@@ -1,4 +1,9 @@
+#!/bin/bash
+
 set -exu
+if set -o | grep pipefail ; then
+  set o pipefail
+fi
 echo $PWD
 ls 
 
