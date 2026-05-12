@@ -7,4 +7,6 @@ requires.properties = \
     var.rh.jdk \
     var.msys2.enabled \
     var.sys.fips \
-    var.os.version.major
+    var.os.version.major \
+    hydra.using.jfron \
+    vm.debug
