@@ -26,6 +26,8 @@ public class VarDeps implements Callable<Map<String, String>> {
         map.put("var.msys2.enabled", checkVar("MSYS2_ENABLED") ? "true": "false");
         map.put("var.sys.fips", isFipsEnabled() ? "true" : "false");
         map.put("var.os.version.major", String.valueOf(getOsVersionId()));
+        map.put("hydra.using.jfron", "" + hydraUsingJfrOn());
+        map.put("vm.debug", "" + vmDebug());
         return map;
     }
 
@@ -52,6 +54,21 @@ public class VarDeps implements Callable<Map<String, String>> {
         }
         return false;
     }
+
+    static boolean hydraUsingJfrOn() {
+        String javaToolOptions = System.getenv("JAVA_TOOL_OPTIONS");
+        return javaToolOptions != null && javaToolOptions.contains("StartFlightRecording");
+    }
+
+    static boolean vmDebug() {
+        String debug = System.getProperty("jdk.debug");
+        if (debug != null) {
+            return debug.contains("debug");
+        } else {
+            return System.getProperty("java.vm.version").toLowerCase().contains("debug");
+        }
+    }
+
 
     public static int getOsVersionId() {
         File osRelease = new File("/etc/os-release");

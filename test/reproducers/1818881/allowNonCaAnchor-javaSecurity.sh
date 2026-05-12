@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # @test allowNonCaAnchor-javaSecurity
-# @requires var.rh.jdk == "true"
+# @requires (var.rh.jdk == "true") & (jdk.version.major > 8 | !(vm.debug == "true" & hydra.using.jfron == "true"))
 # @bug 1818881
 # @summary Add security property (i.e. java.security file) version of jdk.security.allowNonCaAnchor
 # @run shell allowNonCaAnchor-javaSecurity.sh
