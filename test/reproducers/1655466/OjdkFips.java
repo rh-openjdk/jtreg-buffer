@@ -42,6 +42,24 @@ public class OjdkFips {
         }
     }
 
+    static boolean rhFIPSJDK() {
+        String otoolProjectName = System.getenv("OTOOL_PROJECT_NAME");
+        if (otoolProjectName != null) {
+            String[] fipsProjects = { "rpms", "portable", "fips"};
+            for (String fipsProject : fipsProjects) {
+                if (otoolProjectName.indexOf(fipsProject) >= 0) {
+                    return true;
+                }
+            }
+        }
+        String vendor = System.getProperty("java.vendor");
+        System.out.println(vendor);
+        if (vendor.toLowerCase().matches(".*red.*hat.*")) {
+            return true;
+        }
+        return false;
+    }
+
     static boolean testProviders() throws Exception  {
         boolean failed = false;
 
@@ -85,6 +103,10 @@ public class OjdkFips {
     public static void main(String[] args) throws Exception {
         if (!fipsEnabled()) {
             System.err.println("FIPS not enabled, skipping!");
+            return;
+        }
+        if (!rhFIPSJDK()) {
+            System.err.println("Not RH fips-enabled JDK, skipping!");
             return;
         }
         if (testProviders()) {
