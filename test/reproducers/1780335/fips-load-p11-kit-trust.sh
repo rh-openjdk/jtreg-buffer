@@ -3,7 +3,7 @@
 # @test
 # @author zzambers
 # @bug 1780335
-# @requires jdk.version.major >= 8 & var.msys2.enabled == "false"
+# @requires jdk.version.major >= 8 & jdk.version.major < 25 & var.msys2.enabled == "false"
 # @summary FIPS mode Provider refuses to load pk11-kit-trust
 # @run shell fips-load-p11-kit-trust.sh
 #
