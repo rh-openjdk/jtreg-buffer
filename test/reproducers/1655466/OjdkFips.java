@@ -61,6 +61,10 @@ public class OjdkFips {
 
         for (Provider p: Security.getProviders()) {
             String name = p.getName();
+            if (name.equals("SunPKCS11-FIPS")) {
+                // on jdk 25+ name changed SunPKCS11-NSS-FIPS -> SunPKCS11-FIPS
+                name = "SunPKCS11-NSS-FIPS";
+            }
             if (! expectedProviders.remove(name)) {
                 if (! expectedProviders2.remove(name)) {
                     System.err.println("ERR: unexpected provider: " + name);
