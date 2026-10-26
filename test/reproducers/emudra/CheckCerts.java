@@ -81,7 +81,7 @@ public class CheckCerts {
         }
 
         if (badroots)
-            System.exit(1);
+            throw new RuntimeException("Found bad roots");
         else
             out.format("No bad root certificates found%n");
 
