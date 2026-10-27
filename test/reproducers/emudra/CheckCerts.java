@@ -50,8 +50,9 @@ public class CheckCerts {
         "AAA Certificate Services",
 
         // Other eMudhra roots, not related to the compromised intermediates
-        "emSign Root CA - G1",
-        "emSign Root CA - G2"
+        // RHEL cacerts retains these (for now), so skip them.
+        // "emSign Root CA - G1",
+        // "emSign Root CA - G2"
 
     };
 
