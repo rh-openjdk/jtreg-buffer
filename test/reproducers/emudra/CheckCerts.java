@@ -66,7 +66,7 @@ public class CheckCerts {
         TrustManagerFactory tmf
             = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmf.init((KeyStore)null);
-	ArrayList<String> badroots = new ArrayList<>();
+        ArrayList<String> badroots = new ArrayList<>();
 
         for (String r : ROOTS) {
             for (TrustManager tm : tmf.getTrustManagers()) {
@@ -75,7 +75,7 @@ public class CheckCerts {
                         String nm = cert.getSubjectX500Principal().getName();
                         if (nm.contains("CN=" + r)) {
                             out.format("BAD ROOT: %s%n", nm);
-			    badroots.add(nm);
+                            badroots.add(nm);
                         }
                     }
                 }
