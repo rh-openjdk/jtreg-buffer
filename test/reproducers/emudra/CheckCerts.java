@@ -38,6 +38,7 @@
 import javax.net.ssl.*;
 import java.security.*;
 import java.security.cert.*;
+import java.util.*;
 
 import static java.lang.System.out;
 
@@ -65,7 +66,7 @@ public class CheckCerts {
         TrustManagerFactory tmf
             = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmf.init((KeyStore)null);
-        boolean badroots = false;
+	ArrayList<String> badroots = new ArrayList<>();
 
         for (String r : ROOTS) {
             for (TrustManager tm : tmf.getTrustManagers()) {
@@ -74,15 +75,15 @@ public class CheckCerts {
                         String nm = cert.getSubjectX500Principal().getName();
                         if (nm.contains("CN=" + r)) {
                             out.format("BAD ROOT: %s%n", nm);
-                            badroots = true;
+			    badroots.add(nm);
                         }
                     }
                 }
             }
         }
 
-        if (badroots)
-            throw new RuntimeException("Found bad roots");
+        if (badroots.size() > 0)
+            throw new RuntimeException(String.format("Found bad roots [%s]", String.join(";", badroots)));
         else
             out.format("No bad root certificates found%n");
 
