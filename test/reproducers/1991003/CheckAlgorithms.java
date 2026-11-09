@@ -63,6 +63,7 @@ import javax.net.ssl.SSLEngineResult.HandshakeStatus;
  * @test
  * @bug 1991003
  * @summary testing the creation of algorithms
+ * @requires jdk.version.major > 11 | var.sys.fips == "false"
  * @run main CheckAlgorithms
  */
 
