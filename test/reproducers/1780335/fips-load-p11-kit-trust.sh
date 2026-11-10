@@ -16,6 +16,13 @@ if ! [ -e /proc/sys/crypto/fips_enabled ] || [ 0 = "$( cat /proc/sys/crypto/fips
     exit 0
 fi
 
+# skip if not testing RH rpms / portables / fips builds
+if ! "${TESTJAVA}/bin/java" -version 2>&1 | grep -Eqi "red.*hat" \
+    && ! echo "${OTOOL_PROJECT_NAME:-}"  | grep -Eqi 'rpms|portable|fips' ; then
+    printf '%s\n' "this test only applies to RH rpms/portable/fips builds!" 1>&2
+    exit 0
+fi
+
 cleanup() {
     if [ -n "${tmpDir:-}" ] ; then
         rm -rf "${tmpDir}"
